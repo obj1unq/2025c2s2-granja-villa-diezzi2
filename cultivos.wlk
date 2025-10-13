@@ -13,6 +13,10 @@ class Maiz {
 		// TODO: hacer que devuelva la imagen que corresponde
 		return "corn_baby.png"
 	}
+
+	method esCultivo() {
+		return true
+	}
 }
 
 class Tomaco {
@@ -25,6 +29,10 @@ class Tomaco {
 	method image() {
 		return "tomaco_baby.png"
 	}
+
+	method esCultivo() {
+		return true
+	}
 }
 
 class Trigo {
@@ -36,6 +44,10 @@ class Trigo {
 
 	method image() {
 		return "wheat_0.png"
+	}
+
+	method esCultivo() {
+		return true
 	}
 }
 
