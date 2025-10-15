@@ -22,7 +22,7 @@ object personaje {
 
 	method regar() {
 		self.validarCeldaParaRiego()
-		
+		game.uniqueCollider(self).serRegado()
 	}
 
 	method validarCeldaParaRiego(){
