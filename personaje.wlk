@@ -31,6 +31,19 @@ object personaje {
 		}
 	}
 
+	// Cosecha
+
+	method cosechar() {
+		self.validarCeldaParaCosecha()
+		game.uniqueCollider(self).serCosechado()
+	}
+
+	method validarCeldaParaCosecha(){
+		if (not self.hayCultivoAca()) {
+			self.error("No tengo nada para cosechar acá")
+		}
+	}
+
 	// Chequeos de celda actual
 
 	method esCeldaVacia() {
