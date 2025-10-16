@@ -2,10 +2,16 @@ import wollok.game.*
 import personaje.*
 import granja.*
 
+
+// Clase Maíz -------------------------------------------------------------------------------
+
+
 class Maiz {
 	var position
-	var etapaDeCrecimientoActual = etapaDeMaizBaby
+	var etapaDeCrecimientoActual   = etapaDeMaizBaby
 	const etapaDeCrecimientoMaxima = etapaDeMaizAdult
+	const valorDeCultivoEnOro      = 150
+	const granja
 
 	method position() {
 		return position
@@ -15,16 +21,32 @@ class Maiz {
 		return etapaDeCrecimientoActual.image()
 	}
 
-	method esCultivo() {
-		return true
-	}
+	// Riego
 
 	method serRegado() {
 		if (etapaDeCrecimientoActual != etapaDeCrecimientoMaxima) {
 			etapaDeCrecimientoActual = etapaDeCrecimientoActual.siguienteEtapaDeCrecimiento()
 		}
 	}
+
+	// Cosecha
+
+	method serCosechado() {
+		if (etapaDeCrecimientoActual == etapaDeCrecimientoMaxima) {
+			granja.guardarCosechaEnLaGranja(self)
+			game.removeVisual(self)
+		}
+		else game.say(self, "Aún no se puede cosechar este maíz")
+	}
+	
+	// Venta
+
+	method valorDeCultivoEnOro() {
+		return valorDeCultivoEnOro
+	}
 }
+
+	// Etapas de crecimiento de maíz
 
 object etapaDeMaizBaby {
 	const siguienteEtapaDeCrecimiento = etapaDeMaizAdult
@@ -45,35 +67,39 @@ object etapaDeMaizAdult {
 	}
 }
 
+
+// Clase Tomaco -----------------------------------------------------------------------------
+
+
 class Tomaco {
 	var property position
+	const granja
+	const valorDeCultivoEnOro = 80
 
 	method image() {
 		return "tomaco_baby.png"
 	}
 
-	method esCultivo() {
-		return true
-	}
+	// Riego
 
 	method serRegado() {
 		self.validarRiegoDeTomaco()
 		position = self.siguientePosicionDeTomaco()
 	}
-
+		// Nueva posición tras riego
 	method siguientePosicionDeTomaco() {
 		if (self.estaEnElBorde()) {
 			return game.at(position.x(), 0)
 		}
 		else return position.up(1)
 	}
-
+		// Validador para riego
 	method validarRiegoDeTomaco() {
 		if (self.estaOcupadaLaSiguientePosicion()){
 			self.error("No hay espacio para regar este tomaco")
 		}
 	}
-
+		// Booleanos para Riego
 	method estaEnElBorde() {
 		return position.y() == game.height() - 1
 	}
@@ -81,12 +107,30 @@ class Tomaco {
 	method estaOcupadaLaSiguientePosicion() {
 		return not game.getObjectsIn(self.siguientePosicionDeTomaco()).isEmpty()
 	}
+
+	// Cosecha
+
+	method serCosechado() {
+		granja.guardarCosechaEnLaGranja(self)
+		game.removeVisual(self)
+	}
+
+	// Venta
+
+	method valorDeCultivoEnOro() {
+		return valorDeCultivoEnOro
+	}
 }
+
+
+// Clase Trigo ------------------------------------------------------------------------------
+
 
 class Trigo {
 	var position
-	var etapaDeCrecimientoActual = 0
-	var etapaDeCrecimientoMaxima = 3
+	var granja
+	var etapaDeCrecimientoActual   = 0
+	const etapaDeCrecimientoMaxima = 3
 
 	method position() {
 		return position
@@ -96,9 +140,7 @@ class Trigo {
 		return "wheat_" + etapaDeCrecimientoActual.toString() + ".png"
 	}
 
-	method esCultivo() {
-		return true
-	}
+	// Riego
 
 	method serRegado() {
 		if (etapaDeCrecimientoActual == etapaDeCrecimientoMaxima) {
@@ -106,31 +148,57 @@ class Trigo {
 		}
 		else etapaDeCrecimientoActual += 1
 	}
+
+	// Cosecha
+
+	method serCosechado() {
+		if (etapaDeCrecimientoActual >= 2) {
+			granja.guardarCosechaEnLaGranja(self)
+			game.removeVisual(self)
+		}
+		else game.say(self, "Aún no se puede cosechar estre trigo")
+	}
+
+	// Venta
+
+	method valorDeCultivoEnOro() {
+	   return (etapaDeCrecimientoActual - 1) * 100
+	}
 }
 
+
+// Instancias de cultivos -------------------------------------------------------------------
+
+
+// Maíz
+
 object maiz {
-	var granja = granjavilla
+
 	method serSembrado(granjero) {
-		const nuevoMaiz = new Maiz(position = granjero.position())
-		granja.incluirEnLaGranja(nuevoMaiz)
+		const nuevoMaiz = new Maiz(position = granjero.position(), granja = granjero.granja())
+		granjero.granja().sembrarEnLaGranja(nuevoMaiz)
 		game.addVisual(nuevoMaiz)
 	}
 }
 
+// Tomaco
+
 object tomaco {
-	var granja = granjavilla
+
 	method serSembrado(granjero) {
-		const nuevoTomaco = new Tomaco(position = granjero.position())
-		granja.incluirEnLaGranja(nuevoTomaco)
+		const nuevoTomaco = new Tomaco(position = granjero.position(), granja = granjero.granja())
+		granjero.granja().sembrarEnLaGranja(nuevoTomaco)
 		game.addVisual(nuevoTomaco)
 	}
 }
 
+// Trigo
+
 object trigo {
-	var granja = granjavilla
+	
 	method serSembrado(granjero) {
-		const nuevoTrigo = new Trigo(position = granjero.position())
-		granja.incluirEnLaGranja(nuevoTrigo)
+		const nuevoTrigo = new Trigo(position = granjero.position(), granja = granjero.granja())
+		granjero.granja().sembrarEnLaGranja(nuevoTrigo)
 		game.addVisual(nuevoTrigo)
 	}
 }
