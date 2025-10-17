@@ -25,16 +25,16 @@ class Aspersor {
     }
 
     method cosasCercanas() {
-        return ([
-            game.getObjectsIn(position.up(1)),
-            game.getObjectsIn(position.up(1).right(1)),
-            game.getObjectsIn(position.right(1)),
-            game.getObjectsIn(position.right(1).down(1)),
-            game.getObjectsIn(position.down(1)),
-            game.getObjectsIn(position.down(1).left(1)),
-            game.getObjectsIn(position.left(1)),
+        return (
+            game.getObjectsIn(position.up(1))            +
+            game.getObjectsIn(position.up(1).right(1))   +
+            game.getObjectsIn(position.right(1))         +
+            game.getObjectsIn(position.right(1).down(1)) +
+            game.getObjectsIn(position.down(1))          +
+            game.getObjectsIn(position.down(1).left(1))  +
+            game.getObjectsIn(position.left(1))          +
             game.getObjectsIn(position.left(1).up(1))
-               ])
+               )
     }
 }
 
