@@ -21,6 +21,11 @@ class Maiz {
 		return etapaDeCrecimientoActual.image()
 	}
 
+	method esAdulto() {
+		return etapaDeCrecimientoActual == etapaDeCrecimientoMaxima
+	}
+
+
 	// Riego
 
 	method serRegado() {
@@ -32,11 +37,15 @@ class Maiz {
 	// Cosecha
 
 	method serCosechado() {
-		if (etapaDeCrecimientoActual == etapaDeCrecimientoMaxima) {
-			granja.guardarCosechaEnLaGranja(self)
-			game.removeVisual(self)
+		self.validarSiEsCosechable()
+		granja.guardarCosechaEnLaGranja(self)
+		game.removeVisual(self)
+	}
+
+	method validarSiEsCosechable() {
+		if (etapaDeCrecimientoActual != etapaDeCrecimientoMaxima) {
+			self.error("Aún no se puede cosechar este maíz")
 		}
-		else game.say(self, "Aún no se puede cosechar este maíz")
 	}
 	
 	// Venta
@@ -140,6 +149,10 @@ class Trigo {
 		return "wheat_" + etapaDeCrecimientoActual.toString() + ".png"
 	}
 
+	method etapaDeCrecimientoActual() {
+		return etapaDeCrecimientoActual
+	}
+
 	// Riego
 
 	method serRegado() {
@@ -152,11 +165,15 @@ class Trigo {
 	// Cosecha
 
 	method serCosechado() {
-		if (etapaDeCrecimientoActual >= 2) {
-			granja.guardarCosechaEnLaGranja(self)
-			game.removeVisual(self)
+		self.validarSiEsCosechable()
+		granja.guardarCosechaEnLaGranja(self)
+		game.removeVisual(self)
+	}
+
+	method validarSiEsCosechable() {
+		if (etapaDeCrecimientoActual < 2) {
+			self.error("Aún no se puede cosechar este trigo")
 		}
-		else game.say(self, "Aún no se puede cosechar estre trigo")
 	}
 
 	// Venta

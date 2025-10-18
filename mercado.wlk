@@ -28,7 +28,7 @@ class Mercado {
 
 object mercado {
     
-    method crearMercadoEn_Con_Oro_EnLaGranja_(positionDada, oroDado, granjaDada) {
+    method crearMercadoEn_Con_OroEnLaGranja_(positionDada, oroDado, granjaDada) {
         const nuevoMercado = new Mercado(position = positionDada, oroDisponible = oroDado, granja = granjaDada)
 		granjaDada.construirEnLaGranja(nuevoMercado)
 		game.addVisual(nuevoMercado)

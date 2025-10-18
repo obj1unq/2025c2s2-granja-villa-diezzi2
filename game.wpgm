@@ -15,8 +15,8 @@ program farmville {
 
 	// Visuales
 
- 	mercado.crearMercadoEn_Con_Oro_EnLaGranja_(game.center(), 300, granjavilla)
-	mercado.crearMercadoEn_Con_Oro_EnLaGranja_(game.origin(), 760, granjavilla)
+ 	mercado.crearMercadoEn_Con_OroEnLaGranja_(game.center(), 100, granjavilla)
+	mercado.crearMercadoEn_Con_OroEnLaGranja_(game.origin(), 760, granjavilla)
  	game.addVisualCharacter(personaje)
  	
 	// Controles

@@ -5,14 +5,10 @@ import granja.*
 
 
 object personaje {
-	var property position = game.center()
-	const property image  = "fplayer.png"
-	var granja            = granjavilla
-	var oroDisponible     = 0
-
-	method granja() {
-		return granja
-	}
+	var property position      = game.center()
+	const property image       = "fplayer.png"
+	var property granja        = granjavilla
+	var property oroDisponible = 0
 
 	// Siembra
 
@@ -108,5 +104,23 @@ object personaje {
 
 	method elMercadoTieneOroSuficiente() {
 		return game.uniqueCollider(self).oroDisponible() >= oroDisponible
+	}
+
+	// Movimiento
+
+	method moverIzquierda(posiciones) {
+		position = game.at(0.max(position.x() - posiciones), position.y())
+	}
+
+	method moverDerecha(posiciones) {
+	 	position = game.at((game.width() - 1).min(position.x() + posiciones), position.y())
+	}
+	
+	method moverArriba(posiciones) {
+	  	position = game.at(position.x(), (game.height() - 1).min(position.y() + posiciones))
+	}
+	
+	method moverAbajo(posiciones) {
+	  	position = game.at(position.x(), 0.max(position.y() - posiciones))
 	}
 }

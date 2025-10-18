@@ -1,0 +1,157 @@
+
+import personaje.*
+import wollok.game.*
+import granja.*
+import cultivos.*
+import mercado.*
+
+
+
+describe "Farmville tests" {
+    const granja = granjavilla
+
+    method initialize(){
+        game.height(9)
+        game.width(9)
+        personaje.position(game.center())
+        personaje.granja(granja)
+        personaje.oroDisponible(0)
+    }
+
+    // Siembra --------------------------------------------------------------------------------------------
+
+    test "Intento de siembra en una celda vacía y una celda ocupada" {
+        personaje.sembrar(maiz)
+
+        assert.equals(game.uniqueCollider(personaje).image(), "corn_baby.png")
+
+        assert.throwsException({ personaje.sembrar(maiz) })
+    }
+
+    test "Guardado de cultivos sembrados en la granja" {
+        personaje.sembrar(tomaco)
+        personaje.moverIzquierda(1)
+        personaje.sembrar(trigo)
+        personaje.moverIzquierda(1)
+
+        var cultivosSembrados = game.getObjectsIn(game.center()) + game.getObjectsIn(game.center().left(1))
+
+        assert.that(cultivosSembrados.all({cosa => granja.esUnCultivoDeLaGranja(cosa)})) 
+    }
+
+    // Riego manual ---------------------------------------------------------------------------------------
+
+        // Maíz
+
+    test "Prueba de riego de maíz" {
+        personaje.sembrar(maiz)
+        personaje.regar()
+
+        assert.that(game.uniqueCollider(personaje).esAdulto())
+        
+        personaje.regar()
+
+        assert.that(game.uniqueCollider(personaje).esAdulto())
+    }
+
+        // Tomaco
+
+    test "Prueba de riego de tomaco que puede subir" {
+        personaje.sembrar(tomaco)
+        personaje.regar()
+
+        assert.that(personaje.esCeldaVacia())
+    }
+
+    test "Prueba de riego de tomaco que no puede subir" {
+        personaje.sembrar(maiz)
+        personaje.moverAbajo(1)
+        personaje.sembrar(tomaco)
+
+        assert.throwsException({ personaje.regar() })
+    }
+
+    test "Prueba de riego de tomaco que esta en el borde y puede subir" {
+        personaje.moverArriba(4)
+        personaje.sembrar(tomaco)
+        personaje.regar()
+        personaje.moverAbajo(9)
+
+        assert.equals(game.uniqueCollider(personaje).image(), "tomaco_baby.png")
+    }
+
+    test "Prueba de riego de tomaco que esta en el borde y no puede subir" {
+        personaje.moverAbajo(4)
+        personaje.sembrar(trigo)
+        personaje.moverArriba(9)
+        personaje.sembrar(tomaco)
+
+        assert.throwsException({ personaje.regar() })
+    }
+
+        // Trigo
+
+    test "Prueba de riego de trigo" {
+        personaje.sembrar(trigo)
+        personaje.regar()
+        personaje.regar()
+        personaje.regar()
+
+        assert.equals(3, game.uniqueCollider(personaje).etapaDeCrecimientoActual())
+
+        personaje.regar()
+
+        assert.equals(0, game.uniqueCollider(personaje).etapaDeCrecimientoActual())
+    }
+
+    // Cosecha --------------------------------------------------------------------------------------------
+
+    test "Prueba de cosecha" {
+        personaje.sembrar(trigo)
+        
+        assert.throwsException({ personaje.cosechar() })
+
+        personaje.regar()
+        personaje.regar()
+        personaje.cosechar()
+        personaje.sembrar(tomaco)
+        personaje.cosechar()
+        personaje.sembrar(maiz)
+
+        assert.throwsException({ personaje.cosechar() })
+
+        personaje.regar()
+        personaje.cosechar()
+
+        assert.equals(3, granja.cantidadDeCultivosCosechados())
+    }
+
+    // Venta ----------------------------------------------------------------------------------------------
+
+    test "Prueba de ventas a mercado con oro insuficiente y a mercado con oro suficiente" {
+        mercado.crearMercadoEn_Con_OroEnLaGranja_(game.at(4,5), 300, granja)
+        personaje.sembrar(trigo)
+        personaje.regar()
+        personaje.regar()
+        personaje.cosechar()
+        personaje.sembrar(tomaco)
+        personaje.cosechar()
+        personaje.moverArriba(1)
+        personaje.vender()
+
+        assert.equals(180, personaje.oroDisponible())
+    }
+
+    // Aspersores -----------------------------------------------------------------------------------------
+
+    test "Prueba de riego con aspersores" {
+        personaje.sembrar(maiz)
+        personaje.moverAbajo(1)
+        personaje.colocarAspersor()
+        game.uniqueCollider(personaje).regar()
+        personaje.moverArriba(1)
+        personaje.cosechar()
+
+        assert.that(granja.cultivosCosechados().all({cultivo => cultivo.image() == "corn_adult.png"}))
+    }
+}
